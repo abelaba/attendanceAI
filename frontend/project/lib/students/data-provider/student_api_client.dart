@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:project/class/models/class_model.dart';
-import 'package:project/students/models/student_models.dart';
+import 'package:project/students/models/student_model.dart';
 import 'package:project/teacher/models/Teachers.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';

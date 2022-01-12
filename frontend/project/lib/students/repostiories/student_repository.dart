@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
-import 'package:project/students/models/student_models.dart';
+import 'package:project/students/models/student_model.dart';
 import 'package:project/students/data-provider/student_api_client.dart';
 
 class StudentRepository {
