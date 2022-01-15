@@ -1,4 +1,4 @@
-import 'package:project/class/models/ClassName.dart';
+import 'package:project/class/models/class_model.dart';
 import 'package:project/class/data-provider/class_api_client.dart';
 
 class ClassRepostiry {
@@ -6,11 +6,11 @@ class ClassRepostiry {
 
   ClassRepostiry({required this.classApiClient});
 
-  Future<ClassName> getClassDetail(int id) async {
+  Future<ClassModel> getClassDetail(int id) async {
     return await classApiClient.getClassDetail(id);
   }
 
-  Future<List<ClassName>> getClasses(String name, String password) async {
+  Future<List<ClassModel>> getClasses(String name, String password) async {
     return await classApiClient.getClasses(name, password);
   }
 

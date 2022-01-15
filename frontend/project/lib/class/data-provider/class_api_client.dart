@@ -1,15 +1,13 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:project/class/models/class_model.dart';
-import 'package:project/teacher/models/Teachers.dart';
 
 class ClassApiClient {
   final http.Client httpClient;
   final url = 'http://192.168.1.10:3000';
   const ClassApiClient({required this.httpClient});
-  Future<ClassName> getClassDetail(int id) async {
+  Future<ClassModel> getClassDetail(int id) async {
     final response =
         await this.httpClient.get(Uri.parse("$url/getClassDetail/$id"));
     if (response.statusCode != 200) {
@@ -17,20 +15,20 @@ class ClassApiClient {
     }
     final json = jsonDecode(response.body);
     print(json);
-    return ClassName.fromJson(json);
+    return ClassModel.fromJson(json);
   }
 
-  Future<List<ClassName>> getClasses(String name, String password) async {
+  Future<List<ClassModel>> getClasses(String name, String password) async {
     final response =
         await this.httpClient.get(Uri.parse("$url/getClasses/$name/$password"));
     if (response.statusCode != 200) {
       print(response.body);
     }
     final json = jsonDecode(response.body) as List;
-    return json.map((className) => ClassName.fromJson(className)).toList();
+    return json.map((className) => ClassModel.fromJson(className)).toList();
   }
 
-  Future<ClassName> createClassName(
+  Future<ClassModel> createClassName(
       String className, String teacherName, String teacherpPassword) async {
     final response = await httpClient.post(Uri.parse("$url/createClass"),
         headers: <String, String>{
@@ -46,7 +44,7 @@ class ClassApiClient {
     }
     final json = jsonDecode(response.body);
     print(json);
-    return ClassName.fromJson(json);
+    return ClassModel.fromJson(json);
   }
 
   Future<void> addStudent(int classId, int studentId) async {
