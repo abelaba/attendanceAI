@@ -13,8 +13,8 @@ class StudentBloc extends Bloc<StudentEvent, StudentState> {
       print("creating student");
       yield OneStudentLoading();
       try {
-        final Student student = await studentRepository.studentApiClient
-            .createStudent(studentEvent.name);
+        final Student student = await studentRepository.createStudent(
+            studentEvent.name, studentEvent.image);
         yield OneStudentLoaded(student: student);
       } catch (e) {
         print(e.toString());
@@ -50,10 +50,23 @@ class StudentBloc extends Bloc<StudentEvent, StudentState> {
       }
     }
     if (studentEvent is GetAllStudents) {
-      print("student loadind");
+      print("Student loading");
 
       yield OneStudentLoading();
       try {
+        final List<Student> students =
+            await studentRepository.studentApiClient.getStudents();
+        yield AllStudentLoaded(students: students);
+      } catch (e) {
+        print(e.toString());
+        yield StudentError();
+      }
+    }
+    if (studentEvent is DeleteStudent) {
+      print("deleting a student");
+      yield OneStudentLoading();
+      try {
+        await studentRepository.deleteStudent(studentEvent.id);
         final List<Student> students =
             await studentRepository.studentApiClient.getStudents();
         yield AllStudentLoaded(students: students);

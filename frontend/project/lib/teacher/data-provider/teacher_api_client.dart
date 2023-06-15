@@ -2,10 +2,11 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:project/teacher/models/models.dart';
+import 'package:project/utils/constants.dart';
 
 class TeacherApiClient {
   final http.Client httpClient;
-  final url = 'http://192.168.1.10:3000';
+  final url = Constants.baseURL;
 
   TeacherApiClient({required this.httpClient});
   Future<Teacher> createTeacher(Teacher teacher) async {
@@ -20,11 +21,11 @@ class TeacherApiClient {
         <String, dynamic>{"name": teacher.name, "password": teacher.password},
       ),
     );
-    
+
     if (response.statusCode != 200) {
       throw Exception("Could not create teacher" + response.body);
     }
-    
+
     return Teacher.fromJson(jsonDecode(response.body));
   }
 
@@ -83,13 +84,13 @@ class TeacherApiClient {
   }
 
   Future<void> deleteTeacher(Teacher teacher) async {
-    final http.Response response = await httpClient.delete(
-        Uri.parse("$url/deleteTeacher/1"),
-        headers: {
-          "Content-type": "application/json",
-          "Accept": "application/json",
-        },
-        body: jsonEncode(<String, dynamic>{'name': teacher.name}));
+    final http.Response response =
+        await httpClient.delete(Uri.parse("$url/deleteTeacher/1"),
+            headers: {
+              "Content-type": "application/json",
+              "Accept": "application/json",
+            },
+            body: jsonEncode(<String, dynamic>{'name': teacher.name}));
     if (response.statusCode != 200) {
       throw Exception("Failed to delete Teacher");
     }
