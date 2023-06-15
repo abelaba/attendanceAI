@@ -5,7 +5,7 @@ import 'package:project/class/models/class_model.dart';
 
 class ClassApiClient {
   final http.Client httpClient;
-  final url = 'http://192.168.1.10:3000';
+  final url = 'http://192.168.8.100:3000';
   const ClassApiClient({required this.httpClient});
   Future<ClassModel> getClassDetail(int id) async {
     final response =
@@ -55,7 +55,7 @@ class ClassApiClient {
             },
             body: jsonEncode(<String, dynamic>{"student-id": studentId}));
     if (response.statusCode != 200) {
-      throw Exception("COuld not add student due to " + response.body);
+      throw Exception("Could not add student due to " + response.body);
     }
   }
 

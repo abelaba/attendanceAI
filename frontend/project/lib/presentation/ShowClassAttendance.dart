@@ -13,7 +13,7 @@ class _showClassAttendanceState extends State {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text("Class Attendnce"),
+          title: Text("Class Attendance"),
           leading: IconButton(
               icon: Icon(Icons.arrow_back),
               onPressed: () => {Navigator.of(context).pop()})),
