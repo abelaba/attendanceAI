@@ -44,30 +44,24 @@ class App extends StatelessWidget {
       required this.studentRepository});
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: MultiBlocProvider(
-            providers: [
-              BlocProvider(
-                  create: (context) =>
-                      TeacherBloc(teacherRepository: this.teacherRepository)),
-              BlocProvider(
-                  create: (context) =>
-                      ClassBloc(classRepostiry: classRepostiry)),
-              BlocProvider(
-                  create: (context) =>
-                      StudentBloc(studentRepository: studentRepository)),
-              BlocProvider(
-                  create: (context) => AttendanceBloc(
-                      attendanceRepository: attendanceRepository))
-            ],
-            child: MaterialApp(
-              debugShowCheckedModeBanner: false,
-              initialRoute: RouteGenerator.loginPage,
-              onGenerateRoute: RouteGenerator.routegenerator,
-            )),
-      ),
-    );
+    return MultiBlocProvider(
+        providers: [
+          BlocProvider(
+              create: (context) =>
+                  TeacherBloc(teacherRepository: this.teacherRepository)),
+          BlocProvider(
+              create: (context) => ClassBloc(classRepostiry: classRepostiry)),
+          BlocProvider(
+              create: (context) =>
+                  StudentBloc(studentRepository: studentRepository)),
+          BlocProvider(
+              create: (context) =>
+                  AttendanceBloc(attendanceRepository: attendanceRepository))
+        ],
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          initialRoute: RouteGenerator.loginPage,
+          onGenerateRoute: RouteGenerator.routegenerator,
+        ));
   }
 }

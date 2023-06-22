@@ -1,16 +1,16 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:project/students/bloc/StudentBloc.dart';
 import 'package:project/students/bloc/StudentEvent.dart';
 import 'package:project/students/bloc/StudentState.dart';
 import 'package:http/http.dart' as http;
-
-enum ImageLoadingStatus { EMPTY, LOADING, ERROR, LOADED }
 
 class ShowStudentDetail extends StatefulWidget {
   final String studentName;
@@ -31,39 +31,21 @@ class _ShowStudentDetailState extends State {
   final String studentName;
   final String imagePath;
   final int id;
-  ImageLoadingStatus imageLoadingStatus = ImageLoadingStatus.EMPTY;
+  final nameController = TextEditingController();
+  late XFile? _selectedFile;
+  final ImagePicker _picker = ImagePicker();
 
   _ShowStudentDetailState(
-      {required this.studentName, required this.imagePath, required this.id});
+      {required this.studentName, required this.imagePath, required this.id})
+      : _selectedFile = null;
 
-  late List<int> _selectedFile;
-  late Uint8List _bytesData;
-  
-  // startWebFilePicker() async {
-  //   html.InputElement uploadInput = html.FileUploadInputElement() as html.InputElement;
-  //   uploadInput.multiple = true;
-  //   uploadInput.draggable = true;
-  //   uploadInput.click();
-
-  //   uploadInput.onChange.listen((e) {
-  //     final files = uploadInput.files;
-  //     final file = files![0];
-  //     final reader = new html.FileReader();
-
-  //     reader.onLoadEnd.listen((e) {
-  //       _handleResult(reader.result??"");
-  //     });
-  //     reader.readAsDataUrl(file);
-  //   });
-  // }
-    void _handleResult(Object result) {
+  Future<void> _pickImage() async {
+    // Pick an image
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     setState(() {
-      _bytesData = Base64Decoder().convert(result.toString().split(",").last);
-      _selectedFile = _bytesData;
+      _selectedFile = image!;
     });
   }
-
-
 
   final namecontroller = TextEditingController();
   final _key = GlobalKey<FormState>();
@@ -85,68 +67,116 @@ class _ShowStudentDetailState extends State {
     );
   }
 
-
   @override
-  Widget build(BuildContext Bcontext) {
-    return BlocBuilder<StudentBloc, StudentState>(builder: (context, state) {
-      return Scaffold(
-        key: _scaffoldKey,
-        appBar: AppBar(
-          title: Text("Edit Students"),
-        ),
-        body: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.all(15),
-              child: Text(
-                "Name ${this.studentName}",
-                style: TextStyle(fontSize: 45),
-              ),
-            ),
-            Form(
-                key: _key,
-                child: Column(
-                  children: [
-                    Container(
-                      child: Image.network("http://192.168.1.10:3000/register/displayImage/$id")  ,
+  Widget build(BuildContext context) {
+    return BlocBuilder<StudentBloc, StudentState>(
+      builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text("Edit Student"),
+            centerTitle: true,
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+          ),
+          extendBodyBehindAppBar: true,
+          body: Stack(
+            children: [
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.blue.shade800, Colors.blue.shade300],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
                     ),
-                     _Name(),
-                    Container(
-                        margin: EdgeInsets.all(16),
-                        child: ElevatedButton(
-                          onPressed: () {
+                  ),
+                ),
+              ),
+              Align(
+                alignment: Alignment.topCenter,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 120.0),
+                  child: Column(
+                    children: [
+                      CircleAvatar(
+                        radius: 80,
+                        backgroundColor: Colors.white,
+                        child: ClipOval(
+                          child: _selectedFile != null
+                              ? Image.file(
+                                  File(_selectedFile!.path),
+                                  fit: BoxFit.cover,
+                                  width: 160,
+                                  height: 160,
+                                )
+                              : Image.network(
+                                  "http://192.168.8.100:3000/register/displayImage/$id",
+                                  width: 160,
+                                  height: 160,
+                                  fit: BoxFit.cover,
+                                ),
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: TextFormField(
+                          controller: nameController,
+                          style: TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            hintText: "Student Name",
+                            hintStyle: TextStyle(color: Colors.white70),
+                            filled: true,
+                            fillColor: Colors.blue.shade700,
+                            prefixIcon: Icon(Icons.verified_user),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () async {
+                          await _pickImage();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.blue.shade700,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text("Load Image"),
+                      ),
+                      SizedBox(height: 10),
+                      ElevatedButton(
+                        onPressed: () {
+                          if (_key.currentState!.validate()) {
                             BlocProvider.of<StudentBloc>(context).add(
-                                AddImageToStudent(
-                                    studentId: this.id,
-                                    studentImage: this._selectedFile));
-                              Navigator.of(Bcontext).pop();
-                                
-                          },
-                          child: Text('Save Image'),
-                          
-                        )),
-                    // _buildAddPhoto(),
-                  ElevatedButton(onPressed: ()=>{
-                    
-                  }, child: Text("Load Image")),
-                    ElevatedButton(
-                        onPressed: () => {
-                              if (_key.currentState!.validate())
-                                {
-                                  BlocProvider.of<StudentBloc>(context).add(
-                                      UpdateStudent(
-                                          studentName: this.namecontroller.text,
-                                          id: id)),
-                                }
-                            },
-                        child: Text("Update Name"))
-                  ],
-                ))
-          ],
-        ),
-      );
-    });
+                              UpdateStudent(
+                                studentName: nameController.text,
+                                id: id,
+                              ),
+                            );
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.blue.shade700,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text("Update Name"),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
-
-  
 }
