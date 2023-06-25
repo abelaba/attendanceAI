@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:project/Arguments/ScreenArguments.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:project/arguments/ScreenArguments.dart';
 import 'package:project/routes.dart';
+import 'package:project/teacher/bloc/bloc.dart';
 
 class HomePage extends StatefulWidget {
   final String teacherName;
@@ -25,7 +27,7 @@ class _MyStatefulWidgetState extends State {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Attendance ")),
-      body: const Center(
+      body: Center(
         child: Text('Show and see attendance'),
       ),
       drawer: Drawer(
@@ -50,7 +52,7 @@ class _MyStatefulWidgetState extends State {
               },
             ),
             ListTile(
-              title: const Text('Show classes'),
+              title: const Text('Classes'),
               onTap: () {
                 Navigator.of(context).pushNamed(RouteGenerator.showClasses,
                     arguments: new ScreenArguments(
@@ -58,6 +60,19 @@ class _MyStatefulWidgetState extends State {
                         className: "",
                         name: this.teacherName,
                         password: this.teacherPassword));
+              },
+            ),
+            ListTile(
+              title: const Text('Students'),
+              onTap: () {
+                Navigator.of(context).pushNamed(
+                  RouteGenerator.showAllStudents,
+                  arguments: ScreenArguments(
+                      classId: 0,
+                      className: "",
+                      name: this.teacherName,
+                      password: this.teacherPassword),
+                );
               },
             ),
             ListTile(
@@ -69,6 +84,13 @@ class _MyStatefulWidgetState extends State {
                         className: "",
                         name: this.teacherName,
                         password: this.teacherPassword));
+              },
+            ),
+            ListTile(
+              title: const Text('Logout'),
+              onTap: () {
+                BlocProvider.of<TeacherBloc>(context).close();
+                Navigator.of(context).popAndPushNamed(RouteGenerator.loginPage);
               },
             ),
           ],
